@@ -482,11 +482,7 @@ func loadTemplates() {
 	templateMutex.Lock()
 	defer templateMutex.Unlock()
 
-	// Ensure prompts directory exists
-	promptsDir := "prompts"
-	if err := os.MkdirAll(promptsDir, os.ModePerm); err != nil {
-		log.Fatalf("Failed to create prompts directory: %v", err)
-	}
+	promptsDir := "/config/prompts"
 
 	// Load title template
 	titleTemplatePath := filepath.Join(promptsDir, "title_prompt.tmpl")
