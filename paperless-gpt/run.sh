@@ -35,11 +35,15 @@ export GOOGLE_PROCESSOR_ID=$(bashio::config 'GOOGLE_PROCESSOR_ID')
 export LLM_LANGUAGE=$(bashio::config 'LLM_LANGUAGE')
 export PAPERLESS_PUBLIC_URL=$(bashio::config 'PAPERLESS_PUBLIC_URL')
 
+# Create prompts directory if it doesn't exist
 PROMPTS_DIR="/config/prompts"
-mkdir -p "$PROMPTS_DIR"
+if [ ! -d "$PROMPTS_DIR" ]; then
+    mkdir -p "$PROMPTS_DIR"
+fi
 
-# Create default prompts if they don't exist
-cat > "$PROMPTS_DIR/title_prompt.tmpl" <<'EOF'
+# Create default title prompt if it doesn't exist
+if [ ! -f "$PROMPTS_DIR/title_prompt.tmpl" ]; then
+    cat <<'EOF' > "$PROMPTS_DIR/title_prompt.tmpl"
 I will provide you with the content of a document that has been partially read by OCR (so it may contain errors).
 Your task is to find a suitable document title that I can use as the title in the paperless-ngx program.
 Respond only with the title, without any additional information. The content is likely in {{.Language}}.
@@ -47,8 +51,11 @@ Respond only with the title, without any additional information. The content is 
 Content:
 {{.Content}}
 EOF
+fi
 
-cat > "$PROMPTS_DIR/tag_prompt.tmpl" <<'EOF'
+# Create default tag prompt if it doesn't exist
+if [ ! -f "$PROMPTS_DIR/tag_prompt.tmpl" ]; then
+    cat <<'EOF' > "$PROMPTS_DIR/tag_prompt.tmpl"
 I will provide you with the content and the title of a document. Your task is to select appropriate tags for the document from the list of available tags I will provide. Only select tags from the provided list. Respond only with the selected tags as a comma-separated list, without any additional information. The content is likely in {{.Language}}.
 
 Available Tags:
@@ -63,8 +70,11 @@ Content:
 Please concisely select the {{.Language}} tags from the list above that best describe the document.
 Be very selective and only choose the most relevant tags since too many tags will make the document less discoverable.
 EOF
+fi
 
-cat > "$PROMPTS_DIR/correspondent_prompt.tmpl" <<'EOF'
+# Create default correspondent prompt if it doesn't exist
+if [ ! -f "$PROMPTS_DIR/correspondent_prompt.tmpl" ]; then
+    cat <<'EOF' > "$PROMPTS_DIR/correspondent_prompt.tmpl"
 I will provide you with the content of a document. Your task is to suggest a correspondent that is most relevant to the document.
 
 Correspondents are the senders of documents that reach you. In the other direction, correspondents are the recipients of documents that you send.
@@ -92,8 +102,11 @@ The content is likely in {{.Language}}.
 Document Content:
 {{.Content}}
 EOF
+fi
 
-cat > "$PROMPTS_DIR/created_date_prompt.tmpl" <<'EOF'
+# Create default created date prompt if it doesn't exist
+if [ ! -f "$PROMPTS_DIR/created_date_prompt.tmpl" ]; then
+    cat <<'EOF' > "$PROMPTS_DIR/created_date_prompt.tmpl"
 I will provide you with the content of a document. Your task is to find the date when the document was created.
 Respond only with the date in YYYY-MM-DD format, without any additional information. If no day was found, use the first day of the month. If no month was found, use January. If no date was found at all, answer with today's date.
 The content is likely in {{.Language}}. Today's date is {{.Today}}.
@@ -101,10 +114,17 @@ The content is likely in {{.Language}}. Today's date is {{.Today}}.
 Content:
 {{.Content}}
 EOF
+fi
 
-cat > "$PROMPTS_DIR/ocr_prompt.tmpl" <<'EOF'
+# Create default OCR prompt if it doesn't exist
+if [ ! -f "$PROMPTS_DIR/ocr_prompt.tmpl" ]; then
+    cat <<'EOF' > "$PROMPTS_DIR/ocr_prompt.tmpl"
 Just transcribe the text in this image and preserve the formatting and layout (high quality OCR). Do that for ALL the text in the image. Be thorough and pay attention. This is very important. The image is from a text document so be sure to continue until the bottom of the page. Thanks a lot! You tend to forget about some text in the image so please focus! Use markdown format but without a code block.
 EOF
+fi
+
+# Change working directory to the location of the prompts
+cd /config
 
 # Run the application
 /app/paperless-gpt

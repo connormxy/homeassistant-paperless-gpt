@@ -7,14 +7,14 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 # Set working directory
 WORKDIR /app
 
-# Copy the application source
-COPY app/ .
+# Copy the application source code
+COPY app/ /app/
 
-# Install dependencies
+# Install Go and other dependencies
 RUN apk add --no-cache go musl-dev gcc
 
 # Build the application
-RUN CGO_ENABLED=1 GOMAXPROCS=$(nproc) go build -tags musl -o paperless-gpt .
+RUN cd /app && CGO_ENABLED=1 GOMAXPROCS=$(nproc) go build -tags musl -o paperless-gpt .
 
 # Copy run.sh
 COPY paperless-gpt/run.sh /
