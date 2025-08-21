@@ -1,0 +1,124 @@
+# See https://developers.home-assistant.io/docs/add-ons/configuration#add-on-config
+name: Paperless-GPT
+version: "1.0.0"
+slug: paperless-gpt
+description: A private document assistant that uses generative AI to answer questions about your documents
+url: https://github.com/zeltilla/paperless-gpt-ha-addon
+arch:
+  - aarch64
+  - amd64
+init: false
+ports:
+  8080/tcp: 8080
+map:
+  - "addon_configs:rw"
+options:
+  LOG_LEVEL: info
+  PAPERLESS_BASE_URL: "http://ca5234a0-paperless-ngx:80"
+  PAPERLESS_API_TOKEN: ""
+  PAPERLESS_INSECURE_SKIP_VERIFY: false
+  CORRESPONDENT_BLACK_LIST: ""
+  AZURE_DOCAI_ENDPOINT: ""
+  AZURE_DOCAI_KEY: ""
+  AZURE_DOCAI_MODEL_ID: "prebuilt-layout"
+  AZURE_DOCAI_TIMEOUT_SECONDS: "30"
+  AZURE_DOCAI_OUTPUT_CONTENT_FORMAT: "markdown"
+  OPENAI_API_KEY: ""
+  MANUAL_TAG: "needs:manual"
+  AUTO_TAG: "needs:auto"
+  MANUAL_OCR_TAG: "needs:manual:ocr"
+  AUTO_OCR_TAG: "needs:auto:ocr"
+  OCR_PROCESS_MODE: "auto"
+  LLM_PROVIDER: "openai"
+  LLM_MODEL: "gpt-4o-mini"
+  VISION_LLM_PROVIDER: "openai"
+  VISION_LLM_MODEL: "gpt-4o-mini"
+  LISTEN_INTERFACE: "0.0.0.0"
+  AUTO_GENERATE_TITLE: "true"
+  AUTO_GENERATE_TAGS: "true"
+  AUTO_GENERATE_CORRESPONDENTS: "true"
+  AUTO_GENERATE_CREATED_DATE: "true"
+  CREATE_LOCAL_HOCR: false
+  CREATE_LOCAL_PDF: false
+  LOCAL_HOCR_PATH: "/share/paperless-gpt/hocr"
+  LOCAL_PDF_PATH: "/share/paperless-gpt/pdf"
+  PDF_UPLOAD: false
+  PDF_REPLACE: false
+  PDF_COPY_METADATA: true
+  PDF_OCR_COMPLETE_TAG: ""
+  PDF_OCR_TAGGING: true
+  PDF_SKIP_EXISTING_OCR: true
+  DOCLING_URL: ""
+  DOCLING_IMAGE_EXPORT_MODE: "none"
+  OCR_PROVIDER: "azure"
+  GOOGLE_PROJECT_ID: ""
+  GOOGLE_LOCATION: ""
+  GOOGLE_PROCESSOR_ID: ""
+  MISTRAL_API_KEY: ""
+  MISTRAL_MODEL: "mistral-large-latest"
+  OCR_LIMIT_PAGES: "10"
+  PAPERLESS_PUBLIC_URL: ""
+  OPENAI_API_TYPE: ""
+  OPENAI_BASE_URL: ""
+  TOKEN_LIMIT: "100000"
+  OLLAMA_HOST: "http://76e18fb5-ollama:11434"
+  GOOGLEAI_API_KEY: ""
+  LLM_LANGUAGE: "en"
+  REQUESTS_PER_MINUTE: "10"
+  MAX_RETRIES: "3"
+  BACKOFF_MAX_WAIT: "30"
+schema:
+  LOG_LEVEL: list(trace|debug|info|notice|warning|error|fatal)
+  PAPERLESS_BASE_URL: url
+  PAPERLESS_API_TOKEN: password
+  PAPERLESS_INSECURE_SKIP_VERIFY: bool
+  CORRESPONDENT_BLACK_LIST: str
+  AZURE_DOCAI_ENDPOINT: str?
+  AZURE_DOCAI_KEY: password?
+  AZURE_DOCAI_MODEL_ID: str?
+  AZURE_DOCAI_TIMEOUT_SECONDS: str?
+  AZURE_DOCAI_OUTPUT_CONTENT_FORMAT: str?
+  OPENAI_API_KEY: password?
+  MANUAL_TAG: str
+  AUTO_TAG: str
+  MANUAL_OCR_TAG: str
+  AUTO_OCR_TAG: str
+  OCR_PROCESS_MODE: list(auto|manual|skip|pdf)
+  LLM_PROVIDER: list(openai|ollama|googleai|mistral)
+  LLM_MODEL: str
+  VISION_LLM_PROVIDER: list(openai|ollama|googleai|mistral)
+  VISION_LLM_MODEL: str
+  LISTEN_INTERFACE: str
+  AUTO_GENERATE_TITLE: bool
+  AUTO_GENERATE_TAGS: bool
+  AUTO_GENERATE_CORRESPONDENTS: bool
+  AUTO_GENERATE_CREATED_DATE: bool
+  CREATE_LOCAL_HOCR: bool
+  CREATE_LOCAL_PDF: bool
+  LOCAL_HOCR_PATH: str
+  LOCAL_PDF_PATH: str
+  PDF_UPLOAD: bool
+  PDF_REPLACE: bool
+  PDF_COPY_METADATA: bool
+  PDF_OCR_COMPLETE_TAG: str?
+  PDF_OCR_TAGGING: bool
+  PDF_SKIP_EXISTING_OCR: bool
+  DOCLING_URL: url?
+  DOCLING_IMAGE_EXPORT_MODE: str?
+  OCR_PROVIDER: list(azure|google|docling|mistral|llm)
+  GOOGLE_PROJECT_ID: str?
+  GOOGLE_LOCATION: str?
+  GOOGLE_PROCESSOR_ID: str?
+  MISTRAL_API_KEY: password?
+  MISTRAL_MODEL: str?
+  OCR_LIMIT_PAGES: str?
+  PAPERLESS_PUBLIC_URL: url?
+  OPENAI_API_TYPE: str?
+  OPENAI_BASE_URL: url?
+  TOKEN_LIMIT: str?
+  OLLAMA_HOST: url?
+  GOOGLEAI_API_KEY: password?
+  LLM_LANGUAGE: str?
+  REQUESTS_PER_MINUTE: str?
+  MAX_RETRIES: str?
+  BACKOFF_MAX_WAIT: str?

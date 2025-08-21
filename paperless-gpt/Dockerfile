@@ -1,10 +1,10 @@
-# Define top-level build arguments
-ARG VERSION=docker-dev
-ARG COMMIT=unknown
-ARG BUILD_DATE=unknown
+# https://developers.home-assistant.io/docs/add-ons/dockerfile
+ARG BUILD_FROM
+ARG BUILD_VERSION
+ARG BUILD_ARCH
 
 # Stage 1: Build Vite frontend
-FROM docker.io/node:22-alpine AS frontend
+FROM --platform=${BUILD_ARCH} docker.io/node:22-alpine AS frontend
 
 # Set the working directory inside the container
 WORKDIR /app
@@ -82,7 +82,7 @@ RUN sed -i \
 RUN CGO_ENABLED=1 GOMAXPROCS=$(nproc) go build -tags musl -o paperless-gpt .
 
 # Stage 3: Create a lightweight image with just the binary
-FROM docker.io/alpine:3.22.1
+FROM ${BUILD_FROM}
 
 ENV GIN_MODE=release
 
@@ -95,9 +95,3 @@ WORKDIR /app/
 
 # Copy the Go binary from the builder stage
 COPY --from=builder /app/paperless-gpt .
-
-# Expose the port the app runs on
-EXPOSE 8080
-
-# Command to run the binary
-CMD ["/app/paperless-gpt"]
