@@ -1,97 +1,39 @@
-# https://developers.home-assistant.io/docs/add-ons/dockerfile
-ARG BUILD_FROM
-ARG BUILD_VERSION
-ARG BUILD_ARCH
+# https://developers.home-assistant.io/docs/add-ons/configuration#add-on-dockerfile
+ARG PAPERLESS_GPT_VERSION="v0.27.0"
+ARG BUILD_ARCH=amd64
+ARG BUILD_FROM="ghcr.io/home-assistant/${BUILD_ARCH}-base-alpine:3.21"
 
-# Stage 1: Build Vite frontend
-FROM --platform=${BUILD_ARCH} docker.io/node:22-alpine AS frontend
+# Stage 1: Get the upstream built application
+FROM icereed/paperless-gpt:${PAPERLESS_GPT_VERSION} AS builder
 
-# Set the working directory inside the container
+# Stage 2: Final Home Assistant base image
+FROM $BUILD_FROM
+
+LABEL \
+  org.opencontainers.image.title="Home Assistant Add-on: Paperless-GPT" \
+  org.opencontainers.image.description="AI-powered companion for Paperless-NGX to automatically categorize and extract metadata from your documents." \
+  org.opencontainers.image.source="https://github.com/connormxy/homeassistant-paperless-gpt" \
+  org.opencontainers.image.licenses="MIT License"
+
+# Install runtime dependencies required by paperless-gpt
+RUN apk add --no-cache ca-certificates
+
 WORKDIR /app
 
-# Install necessary packages
-RUN apk add --no-cache git
+# Copy the binary and frontend from the builder stage
+COPY --from=builder /app /app
 
-# Copy package.json and package-lock.json
-COPY web-app/package.json web-app/package-lock.json ./
-
-# Install dependencies
-RUN npm install
-
-# Copy the frontend code
-COPY web-app /app/
-
-# Build the frontend
-RUN npm run build
-
-# Stage 2: Build the Go binary
-FROM docker.io/golang:1.25.0-alpine3.21 AS builder
-
-# Set the working directory inside the container
-WORKDIR /app
-
-# Package versions for Renovate
-# renovate: datasource=repology depName=alpine_3_21/gcc versioning=loose
-ENV GCC_VERSION="14.2.0-r4"
-# renovate: datasource=repology depName=alpine_3_21/musl-dev versioning=loose
-ENV MUSL_DEV_VERSION="1.2.5-r9"
-# renovate: datasource=repology depName=alpine_3_21/mupdf versioning=loose
-ENV MUPDF_VERSION="1.24.10-r0"
-# renovate: datasource=repology depName=alpine_3_21/mupdf-dev versioning=loose
-ENV MUPDF_DEV_VERSION="1.24.10-r0"
-# renovate: datasource=repology depName=alpine_3_21/sed versioning=loose
-ENV SED_VERSION="4.9-r2"
-
-# Install necessary packages with pinned versions
-RUN apk add --no-cache \
-    "gcc=${GCC_VERSION}" \
-    "musl-dev=${MUSL_DEV_VERSION}" \
-    "mupdf=${MUPDF_VERSION}" \
-    "mupdf-dev=${MUPDF_DEV_VERSION}" \
-    "sed=${SED_VERSION}"
-
-# Copy go.mod and go.sum files
-COPY go.mod go.sum ./
-
-# Download dependencies
-RUN go mod download
-
-# Pre-compile go-sqlite3 to avoid doing this every time
-RUN CGO_ENABLED=1 go build -tags musl -o /dev/null github.com/mattn/go-sqlite3
-
-# Copy the frontend build
-COPY --from=frontend /app/dist /app/web-app/dist
-
-# Copy the Go source files
-COPY *.go .
-COPY ocr ./ocr
-
-# Import ARGs from top level
-ARG VERSION
-ARG COMMIT
-ARG BUILD_DATE
-
-# Update version information
-RUN sed -i \
-    -e "s/devVersion/${VERSION}/" \
-    -e "s/devBuildDate/${BUILD_DATE}/" \
-    -e "s/devCommit/${COMMIT}/" \
-    version.go
-
-# Build the binary using caching for both go modules and build cache
-RUN CGO_ENABLED=1 GOMAXPROCS=$(nproc) go build -tags musl -o paperless-gpt .
-
-# Stage 3: Create a lightweight image with just the binary
-FROM ${BUILD_FROM}
-
+# Set the environment
 ENV GIN_MODE=release
 
-# Install necessary runtime dependencies
-RUN apk add --no-cache \
-    ca-certificates
+# We'll map the upstream data path to the shared config/data directory later in the run script.
+ENV DATA_DIR=/config/data
 
-# Set the working directory inside the container
-WORKDIR /app/
+# Copy the rootfs (s6-overlay services, bashio scripts)
+COPY rootfs /
 
-# Copy the Go binary from the builder stage
-COPY --from=builder /app/paperless-gpt .
+# Ensure s6 run script is executable (Windows file creation workaround)
+RUN chmod a+x /etc/s6-overlay/s6-rc.d/paperless-gpt/run
+
+# Expose the web UI port
+EXPOSE 8080

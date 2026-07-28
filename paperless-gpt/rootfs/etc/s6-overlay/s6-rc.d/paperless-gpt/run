@@ -1,0 +1,97 @@
+#!/usr/bin/with-contenv bashio
+# ==============================================================================
+# Paperless-GPT add-on entry point
+# ==============================================================================
+
+bashio::log.info "Starting Paperless-GPT setup..."
+
+SHARE_DIR="/share/paperless-gpt"
+bashio::log.info "Using share directory: ${SHARE_DIR}"
+
+bashio::log.info "Setting up data directories"
+mkdir -p "${SHARE_DIR}/data"
+
+# Create a symlink so that paperless-gpt stores its local db in the share folder
+rm -rf /app/data
+ln -s "${SHARE_DIR}/data" /app/data
+
+# Process Configuration
+export PAPERLESS_BASE_URL=$(bashio::config 'PAPERLESS_BASE_URL')
+export PAPERLESS_API_TOKEN=$(bashio::config 'PAPERLESS_API_TOKEN')
+
+if bashio::config.has_value 'PAPERLESS_PUBLIC_URL'; then
+    export PAPERLESS_PUBLIC_URL=$(bashio::config 'PAPERLESS_PUBLIC_URL')
+fi
+
+export LLM_PROVIDER=$(bashio::config 'LLM_PROVIDER')
+export LLM_MODEL=$(bashio::config 'LLM_MODEL')
+
+# API Keys
+if bashio::config.has_value 'OPENAI_API_KEY'; then
+    export OPENAI_API_KEY=$(bashio::config 'OPENAI_API_KEY')
+fi
+if bashio::config.has_value 'MISTRAL_API_KEY'; then
+    export MISTRAL_API_KEY=$(bashio::config 'MISTRAL_API_KEY')
+fi
+if bashio::config.has_value 'ANTHROPIC_API_KEY'; then
+    export ANTHROPIC_API_KEY=$(bashio::config 'ANTHROPIC_API_KEY')
+fi
+if bashio::config.has_value 'GOOGLEAI_API_KEY'; then
+    export GOOGLEAI_API_KEY=$(bashio::config 'GOOGLEAI_API_KEY')
+fi
+
+# Optional LLM Config
+if bashio::config.has_value 'OPENAI_API_TYPE'; then
+    export OPENAI_API_TYPE=$(bashio::config 'OPENAI_API_TYPE')
+fi
+if bashio::config.has_value 'TOKEN_LIMIT'; then
+    export TOKEN_LIMIT=$(bashio::config 'TOKEN_LIMIT')
+fi
+if bashio::config.has_value 'OLLAMA_CONTEXT_LENGTH'; then
+    export OLLAMA_CONTEXT_LENGTH=$(bashio::config 'OLLAMA_CONTEXT_LENGTH')
+fi
+if bashio::config.has_value 'OLLAMA_HEADERS'; then
+    export OLLAMA_HEADERS=$(bashio::config 'OLLAMA_HEADERS')
+fi
+
+# Tags
+if bashio::config.has_value 'MANUAL_TAG'; then
+    export MANUAL_TAG=$(bashio::config 'MANUAL_TAG')
+fi
+if bashio::config.has_value 'AUTO_TAG'; then
+    export AUTO_TAG=$(bashio::config 'AUTO_TAG')
+fi
+if bashio::config.has_value 'FAIL_TAG'; then
+    export FAIL_TAG=$(bashio::config 'FAIL_TAG')
+fi
+if bashio::config.has_value 'AUTO_TAG_COMPLETE'; then
+    export AUTO_TAG_COMPLETE=$(bashio::config 'AUTO_TAG_COMPLETE')
+else
+    # Explicitly unset if not provided to disable complete tag behavior if desired
+    export AUTO_TAG_COMPLETE=""
+fi
+
+# PDF options
+if bashio::config.has_value 'OCR_LIMIT_PAGES'; then
+    export OCR_LIMIT_PAGES=$(bashio::config 'OCR_LIMIT_PAGES')
+fi
+if bashio::config.true 'CREATE_LOCAL_PDF'; then
+    export CREATE_LOCAL_PDF="true"
+else
+    export CREATE_LOCAL_PDF="false"
+fi
+if bashio::config.true 'CREATE_LOCAL_HOCR'; then
+    export CREATE_LOCAL_HOCR="true"
+else
+    export CREATE_LOCAL_HOCR="false"
+fi
+if bashio::config.true 'PDF_REPLACE'; then
+    export PDF_REPLACE="true"
+else
+    export PDF_REPLACE="false"
+fi
+
+cd /app
+
+bashio::log.info 'Starting Paperless-GPT...'
+exec ./paperless-gpt
