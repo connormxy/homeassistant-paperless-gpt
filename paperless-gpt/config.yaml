@@ -13,14 +13,27 @@ hassio_role: default
 privileged: []
 homeassistant_api: false
 options:
-  PAPERLESS_BASE_URL: "http://paperless-ngx:8000"
+  PAPERLESS_BASE_URL: "http://ca5234a0-paperless-ngx:80"
   PAPERLESS_API_TOKEN: ""
+  PAPERLESS_PUBLIC_URL: ""
   LLM_PROVIDER: "openai"
   LLM_MODEL: "gpt-4o"
   OPENAI_API_KEY: ""
+  MISTRAL_API_KEY: ""
+  ANTHROPIC_API_KEY: ""
+  GOOGLEAI_API_KEY: ""
+  OPENAI_API_TYPE: ""
+  TOKEN_LIMIT: 2000
+  OLLAMA_CONTEXT_LENGTH: 4096
+  OLLAMA_HEADERS: ""
   MANUAL_TAG: "paperless-gpt"
   AUTO_TAG: "paperless-gpt-auto"
   FAIL_TAG: "paperless-gpt-failed"
+  AUTO_TAG_COMPLETE: "paperless-gpt-auto-complete"
+  OCR_PROVIDER: "llm"
+  VISION_LLM_PROVIDER: "openai"
+  VISION_LLM_MODEL: "gpt-4o"
+  OCR_LIMIT_PAGES: 3
   CREATE_LOCAL_PDF: false
   CREATE_LOCAL_HOCR: false
   PDF_REPLACE: false
@@ -42,6 +55,9 @@ schema:
   AUTO_TAG: str
   FAIL_TAG: str
   AUTO_TAG_COMPLETE: str?
+  OCR_PROVIDER: list(llm|google_docai|azure|docling)?
+  VISION_LLM_PROVIDER: list(openai|ollama|googleai|mistral|anthropic)?
+  VISION_LLM_MODEL: str?
   OCR_LIMIT_PAGES: int?
   CREATE_LOCAL_PDF: bool
   CREATE_LOCAL_HOCR: bool

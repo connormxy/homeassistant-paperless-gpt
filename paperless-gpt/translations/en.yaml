@@ -1,0 +1,73 @@
+configuration:
+  PAPERLESS_BASE_URL:
+    name: "Paperless-ngx Internal URL"
+    description: "The internal URL to your Paperless-ngx instance. If using the popular BenoitAnastay Paperless-ngx add-on, leave this as http://ca5234a0-paperless-ngx:80. Otherwise, enter your server's IP and port (e.g., http://192.168.1.100:8000)."
+  PAPERLESS_API_TOKEN:
+    name: "Paperless-ngx API Token"
+    description: "The API token to access Paperless-ngx."
+  PAPERLESS_PUBLIC_URL:
+    name: "Paperless-ngx Public URL"
+    description: "The external public URL for Paperless (e.g. https://paperless.yourdomain.com if using a custom domain eg via reverse proxy or tunnel). Used to generate clickable links in the Web UI."
+  LLM_PROVIDER:
+    name: "Primary LLM Provider"
+    description: "The AI provider used for generating titles and tags."
+  LLM_MODEL:
+    name: "Primary LLM Model"
+    description: "The specific model to use (e.g., gpt-4o, gemini-1.5-pro, claude-3-5-sonnet)."
+  OPENAI_API_KEY:
+    name: "OpenAI API Key"
+    description: "Required if using the 'openai' provider."
+  MISTRAL_API_KEY:
+    name: "Mistral API Key"
+    description: "Required if using the 'mistral' provider."
+  ANTHROPIC_API_KEY:
+    name: "Anthropic API Key"
+    description: "Required if using the 'anthropic' provider."
+  GOOGLEAI_API_KEY:
+    name: "Google AI / Gemini API Key"
+    description: "Required if using the 'googleai' provider."
+  OPENAI_API_TYPE:
+    name: "OpenAI API Type"
+    description: "Set to 'azure' if using Azure OpenAI service."
+  TOKEN_LIMIT:
+    name: "Token Limit"
+    description: "Optional limit for LLM tokens."
+  OLLAMA_CONTEXT_LENGTH:
+    name: "Ollama Context Length"
+    description: "Context window limit if using a local Ollama server."
+  OLLAMA_HEADERS:
+    name: "Ollama Headers"
+    description: "Custom HTTP headers for Ollama (e.g. Authorization=Bearer token)."
+  MANUAL_TAG:
+    name: "Manual Review Tag"
+    description: "Tag added to documents requiring manual review."
+  AUTO_TAG:
+    name: "Auto Process Tag"
+    description: "Tag applied to trigger automatic processing."
+  FAIL_TAG:
+    name: "Failed Tag"
+    description: "Tag applied when processing fails."
+  AUTO_TAG_COMPLETE:
+    name: "Auto Complete Tag"
+    description: "Tag applied after auto-processing succeeds."
+  OCR_PROVIDER:
+    name: "OCR Provider"
+    description: "The backend service used for OCR (Default: llm)."
+  VISION_LLM_PROVIDER:
+    name: "Vision LLM Provider"
+    description: "Required if OCR Provider is 'llm' (e.g., openai)."
+  VISION_LLM_MODEL:
+    name: "Vision LLM Model"
+    description: "The vision model to use (e.g., gpt-4o, minicpm-v)."
+  OCR_LIMIT_PAGES:
+    name: "OCR Page Limit"
+    description: "Limit the number of pages analyzed via OCR (0 for unlimited)."
+  CREATE_LOCAL_PDF:
+    name: "Save Local PDF"
+    description: "Save OCR-enhanced PDFs locally."
+  CREATE_LOCAL_HOCR:
+    name: "Save Local hOCR"
+    description: "Save hOCR files locally."
+  PDF_REPLACE:
+    name: "Replace Original PDF"
+    description: "WARNING: Delete original document after OCR upload."
