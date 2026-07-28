@@ -1,6 +1,6 @@
 # https://developers.home-assistant.io/docs/add-ons/configuration#add-on-config
 name: "Paperless-GPT (DEV)"
-version: "0.27.0"
+version: "0.27.0.1-dev"
 slug: paperless-gpt-dev
 stage: experimental
 description: "AI-powered companion for Paperless-NGX to automatically categorize and extract metadata from your documents."
@@ -15,28 +15,12 @@ homeassistant_api: false
 options:
   PAPERLESS_BASE_URL: "http://ca5234a0-paperless-ngx:80"
   PAPERLESS_API_TOKEN: ""
-  PAPERLESS_PUBLIC_URL: ""
   LLM_PROVIDER: "openai"
   LLM_MODEL: "gpt-4o"
   OPENAI_API_KEY: ""
-  MISTRAL_API_KEY: ""
-  ANTHROPIC_API_KEY: ""
-  GOOGLEAI_API_KEY: ""
-  OPENAI_API_TYPE: ""
-  TOKEN_LIMIT: 2000
-  OLLAMA_CONTEXT_LENGTH: 4096
-  OLLAMA_HEADERS: ""
   MANUAL_TAG: "paperless-gpt"
   AUTO_TAG: "paperless-gpt-auto"
   FAIL_TAG: "paperless-gpt-failed"
-  AUTO_TAG_COMPLETE: "paperless-gpt-auto-complete"
-  OCR_PROVIDER: "llm"
-  VISION_LLM_PROVIDER: "openai"
-  VISION_LLM_MODEL: "gpt-4o"
-  OCR_LIMIT_PAGES: 3
-  CREATE_LOCAL_PDF: false
-  CREATE_LOCAL_HOCR: false
-  PDF_REPLACE: false
 schema:
   PAPERLESS_BASE_URL: str
   PAPERLESS_API_TOKEN: password
@@ -62,6 +46,7 @@ schema:
   CREATE_LOCAL_PDF: bool
   CREATE_LOCAL_HOCR: bool
   PDF_REPLACE: bool
+  ADVANCED_CUSTOM_ENV_BLOCK: str?
 map:
   - share:rw
   - addon_config:rw

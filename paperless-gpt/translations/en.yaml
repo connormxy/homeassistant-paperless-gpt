@@ -71,3 +71,6 @@ configuration:
   PDF_REPLACE:
     name: "Replace Original PDF"
     description: "WARNING: Delete original document after OCR upload."
+  ADVANCED_CUSTOM_ENV_BLOCK:
+    name: "Advanced Custom Config Block"
+    description: "Paste .env formatted variables here (e.g. SUGGESTION_WORKERS=2). These variables will override the basic UI config and any file-based config. See the add-on Documentation for a full list of supported variables."

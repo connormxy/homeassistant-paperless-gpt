@@ -15,6 +15,20 @@ mkdir -p "${SHARE_DIR}/data"
 rm -rf /app/data
 ln -s "${SHARE_DIR}/data" /app/data
 
+# Setup Advanced Configuration Files
+CONFIG_DIR="/config"
+if bashio::fs.directory_exists "${CONFIG_DIR}"; then
+    bashio::log.info "Copying advanced configuration template to ${CONFIG_DIR}/paperless-gpt.env.example"
+    cp /etc/paperless-gpt.env.example "${CONFIG_DIR}/paperless-gpt.env.example"
+    
+    if bashio::fs.file_exists "${CONFIG_DIR}/paperless-gpt.env"; then
+        bashio::log.info "Loading advanced configuration from ${CONFIG_DIR}/paperless-gpt.env"
+        set -a
+        source "${CONFIG_DIR}/paperless-gpt.env"
+        set +a
+    fi
+fi
+
 # Process Configuration
 export PAPERLESS_BASE_URL=$(bashio::config 'PAPERLESS_BASE_URL')
 export PAPERLESS_API_TOKEN=$(bashio::config 'PAPERLESS_API_TOKEN')
@@ -89,6 +103,15 @@ if bashio::config.true 'PDF_REPLACE'; then
     export PDF_REPLACE="true"
 else
     export PDF_REPLACE="false"
+fi
+
+# Setup Advanced UI Configuration Block
+if bashio::config.has_value 'ADVANCED_CUSTOM_ENV_BLOCK'; then
+    bashio::log.info "Loading advanced configuration from UI block"
+    bashio::config 'ADVANCED_CUSTOM_ENV_BLOCK' > /tmp/custom.env
+    set -a
+    source /tmp/custom.env
+    set +a
 fi
 
 cd /app
