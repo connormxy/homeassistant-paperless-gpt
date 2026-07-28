@@ -1,7 +1,7 @@
 # https://developers.home-assistant.io/docs/add-ons/configuration#add-on-dockerfile
 ARG PAPERLESS_GPT_VERSION="v0.27.0"
 ARG BUILD_ARCH=amd64
-ARG BUILD_FROM="ghcr.io/home-assistant/${BUILD_ARCH}-base-alpine:3.21"
+ARG BUILD_FROM="ghcr.io/home-assistant/${BUILD_ARCH}-base:3.20"
 
 # Stage 1: Get the upstream built application
 FROM icereed/paperless-gpt:${PAPERLESS_GPT_VERSION} AS builder
